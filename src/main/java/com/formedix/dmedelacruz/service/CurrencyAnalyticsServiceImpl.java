@@ -1,9 +1,6 @@
 package com.formedix.dmedelacruz.service;
 
 import com.formedix.dmedelacruz.data.CurrencyRate;
-import com.formedix.dmedelacruz.exception.DataNotFoundException;
-import com.formedix.dmedelacruz.exception.ErrorCode;
-import com.formedix.dmedelacruz.exception.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

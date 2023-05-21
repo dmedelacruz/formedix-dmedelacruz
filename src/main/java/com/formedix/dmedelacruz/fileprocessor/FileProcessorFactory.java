@@ -3,7 +3,6 @@ package com.formedix.dmedelacruz.fileprocessor;
 import com.formedix.dmedelacruz.exception.ErrorCode;
 import com.formedix.dmedelacruz.exception.ErrorMessage;
 import com.formedix.dmedelacruz.exception.UnsupportedFileTypeException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package com.formedix.dmedelacruz.controller;
 
-import com.formedix.dmedelacruz.dao.ErrorDetail;
-import com.formedix.dmedelacruz.dao.Response;
+import com.formedix.dmedelacruz.dto.ErrorDetail;
+import com.formedix.dmedelacruz.dto.Response;
 import com.formedix.dmedelacruz.data.CurrencyRate;
 import com.formedix.dmedelacruz.exception.DataNotFoundException;
 import com.formedix.dmedelacruz.exception.ErrorCode;
@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 
 @RestController
-@RequestMapping("/exchange-rates")
+@RequestMapping("/forex")
 @RequiredArgsConstructor
 @Validated
 public class ExchangeRateController {
@@ -33,9 +33,7 @@ public class ExchangeRateController {
     private final CurrencyConverterService currencyConverterService;
     private final CurrencyAnalyticsService currencyAnalyticsService;
 
-    //TODO Validate Requests and Handle Validations
-
-    @PostMapping
+    @PostMapping("/load")
     public ResponseEntity<Response<Map<String, String>>> loadData(
             @RequestParam("file") MultipartFile file
     ) {
@@ -52,13 +50,12 @@ public class ExchangeRateController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<Response<Set<CurrencyRate>>> getExchangeRateForData(
+    @GetMapping("/rates")
+    public ResponseEntity<Response<Set<CurrencyRate>>> getExchangeRateForDate(
             @RequestParam(value = "date", required = false)  @NotBlank String date,
             @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat
     ) {
         try {
-            //TODO Maybe we can add sorting and pagination
             Set<CurrencyRate> exchangeRates = exchangeRateReadService.getExchangeRates(date, dateFormat);
             return ResponseEntity.ok(Response.<Set<CurrencyRate>>builder().content(exchangeRates).build());
         } catch (DataNotFoundException e) {

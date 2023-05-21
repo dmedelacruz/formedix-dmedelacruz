@@ -1,4 +1,4 @@
-package com.formedix.dmedelacruz.dao;
+package com.formedix.dmedelacruz.dto;
 
 import com.formedix.dmedelacruz.exception.ErrorCode;
 

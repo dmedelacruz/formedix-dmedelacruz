@@ -1,4 +1,4 @@
-package com.formedix.dmedelacruz.dao;
+package com.formedix.dmedelacruz.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

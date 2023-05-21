@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -19,12 +18,10 @@ class CsvFileProcessor implements FileProcessor {
 
     private final ExchangeRateWriteService exchangeRateWriteService;
 
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final Map<Integer, String> headerMap = new HashMap<>();
 
     @Override
     public void processData(MultipartFile file) {
-
         Map<LocalDate, Map<String, CurrencyRate>> exchangeRateMap = new TreeMap<>();
         try(Scanner scanner = new Scanner(file.getInputStream())) {
             processHeaderMap(scanner.nextLine());
@@ -32,9 +29,9 @@ class CsvFileProcessor implements FileProcessor {
                 processRecordLine(exchangeRateMap, scanner.nextLine());
             }
             exchangeRateWriteService.saveExchangeRate(exchangeRateMap);
-        } catch (IOException ioe) {
+        }  catch (ParseException pe) {
             //TODO
-        } catch (ParseException pe) {
+        } catch (IOException e) {
             //TODO
         }
     }

@@ -1,7 +1,7 @@
 package com.formedix.dmedelacruz.exception;
 
-import com.formedix.dmedelacruz.dao.ErrorDetail;
-import com.formedix.dmedelacruz.dao.Response;
+import com.formedix.dmedelacruz.dto.ErrorDetail;
+import com.formedix.dmedelacruz.dto.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
