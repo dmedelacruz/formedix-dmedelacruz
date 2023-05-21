@@ -1,12 +1,9 @@
 package com.formedix.dmedelacruz.util;
 
-import com.formedix.dmedelacruz.exception.DateFormatException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtil {
@@ -16,24 +13,20 @@ public class DateUtil {
     /*
      * Default date parsing method that assumes default date format yyyy-MM-dd
      */
-    public static Date parseDate(String dateString) {
+    public static LocalDate parseDate(String dateString) {
         return parse(dateString, DEFAULT_DATE_FORMAT);
     }
 
     /*
      * Date Parsing method that parses a given dateString using a specified dateFormat
      */
-    public static Date parseDate(String dateString, String dateFormat) {
+    public static LocalDate parseDate(String dateString, String dateFormat) {
         return parse(dateString, dateFormat);
     }
 
-    private static Date parse(String dateString, String dateFormat) {
-        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-        try {
-            return simpleDateFormat.parse(dateString);
-        } catch (ParseException p) {
-            throw new DateFormatException();
-        }
+    private static LocalDate parse(String dateString, String dateFormat) {
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+        return LocalDate.parse(dateString, dateTimeFormatter);
     }
 
 }

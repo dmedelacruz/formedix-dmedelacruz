@@ -2,10 +2,12 @@ package com.formedix.dmedelacruz.service;
 
 import com.formedix.dmedelacruz.data.CurrencyRate;
 import com.formedix.dmedelacruz.exception.DataNotFoundException;
-import com.formedix.dmedelacruz.util.DateUtil;
+import com.formedix.dmedelacruz.exception.ErrorCode;
+import com.formedix.dmedelacruz.exception.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -16,12 +18,7 @@ class CurrencyAnalyticsServiceImpl implements CurrencyAnalyticsService {
 
     @Override
     public Double getHighestReferenceRate(String startDateString, String endDateString, Optional<String> dateFormat, String code) {
-        Map<Date, Map<String, CurrencyRate>> exchangeRatesRange = exchangeRateReadService.getExchangeRatesRange(startDateString, endDateString, dateFormat);
-
-        if(exchangeRatesRange == null || exchangeRatesRange.isEmpty()) {
-            throw new DataNotFoundException();
-        }
-
+        Map<LocalDate, Map<String, CurrencyRate>> exchangeRatesRange = exchangeRateReadService.getExchangeRatesRange(startDateString, endDateString, dateFormat);
         Double highestReference = 0.0;
         for (Map<String, CurrencyRate> rateMap : exchangeRatesRange.values()) {
             Double rate = rateMap.get(code).exchangeRate();
@@ -32,12 +29,7 @@ class CurrencyAnalyticsServiceImpl implements CurrencyAnalyticsService {
 
     @Override
     public Double getAverageReferenceRate(String startDateString, String endDateString, Optional<String> dateFormat, String code) {
-        Map<Date, Map<String, CurrencyRate>> exchangeRatesRange = exchangeRateReadService.getExchangeRatesRange(startDateString, endDateString, dateFormat);
-
-        if(exchangeRatesRange == null || exchangeRatesRange.isEmpty()) {
-            throw new DataNotFoundException();
-        }
-
+        Map<LocalDate, Map<String, CurrencyRate>> exchangeRatesRange = exchangeRateReadService.getExchangeRatesRange(startDateString, endDateString, dateFormat);
         Double totalReference = 0.0;
         for (Map<String, CurrencyRate> rateMap : exchangeRatesRange.values()) {
             totalReference += rateMap.get(code).exchangeRate();

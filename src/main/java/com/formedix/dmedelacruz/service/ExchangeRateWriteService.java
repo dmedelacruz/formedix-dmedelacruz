@@ -2,9 +2,9 @@ package com.formedix.dmedelacruz.service;
 
 import com.formedix.dmedelacruz.data.CurrencyRate;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Map;
 
 public interface ExchangeRateWriteService {
-    void saveExchangeRate(Map<Date, Map<String, CurrencyRate>> exchangeRateMap);
+    void saveExchangeRate(Map<LocalDate, Map<String, CurrencyRate>> exchangeRateMap);
 }

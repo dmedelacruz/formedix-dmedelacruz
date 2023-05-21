@@ -2,6 +2,7 @@ package com.formedix.dmedelacruz.fileprocessor;
 
 import com.formedix.dmedelacruz.data.CurrencyRate;
 import com.formedix.dmedelacruz.service.ExchangeRateWriteService;
+import com.formedix.dmedelacruz.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -23,7 +25,7 @@ class CsvFileProcessor implements FileProcessor {
     @Override
     public void processData(MultipartFile file) {
 
-        Map<Date, Map<String, CurrencyRate>> exchangeRateMap = new TreeMap<>();
+        Map<LocalDate, Map<String, CurrencyRate>> exchangeRateMap = new TreeMap<>();
         try(Scanner scanner = new Scanner(file.getInputStream())) {
             processHeaderMap(scanner.nextLine());
             while (scanner.hasNextLine()) {
@@ -44,17 +46,19 @@ class CsvFileProcessor implements FileProcessor {
         }
     }
 
-    private void processRecordLine(Map<Date, Map<String, CurrencyRate>> exchangeRateMap, String recordLine) throws ParseException {
+    private void processRecordLine(Map<LocalDate, Map<String, CurrencyRate>> exchangeRateMap, String recordLine) throws ParseException {
 
         String[] values = recordLine.split(",");
-        String date = values[0];
+        String dateString = values[0];
+        LocalDate date = DateUtil.parseDate(dateString);
 
-        if (exchangeRateMap.containsKey(transformToDate(date))) {
+
+        if (exchangeRateMap.containsKey(date)) {
             return;
         }
 
         Map<String, CurrencyRate> currenciesExchangeRate = new HashMap<>();
-        exchangeRateMap.put(transformToDate(date), currenciesExchangeRate);
+        exchangeRateMap.put(date, currenciesExchangeRate);
 
         for(int x = 1; x < values.length; x++) {
             CurrencyRate currencyRate;
@@ -67,10 +71,6 @@ class CsvFileProcessor implements FileProcessor {
             currenciesExchangeRate.put(headerMap.get(x), currencyRate);
         }
 
-    }
-
-    private Date transformToDate(String dateString) throws ParseException {
-        return simpleDateFormat.parse(dateString);
     }
 
     @Override
