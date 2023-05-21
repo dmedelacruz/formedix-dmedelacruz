@@ -12,29 +12,33 @@ import com.formedix.dmedelacruz.fileprocessor.FileType;
 import com.formedix.dmedelacruz.service.CurrencyAnalyticsService;
 import com.formedix.dmedelacruz.service.CurrencyConverterService;
 import com.formedix.dmedelacruz.service.ExchangeRateReadService;
+import com.formedix.dmedelacruz.validation.NotBlankPositive;
+import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/exchange-rates")
 @RequiredArgsConstructor
+@Validated
 public class ExchangeRateController {
 
     private final ExchangeRateReadService exchangeRateReadService;
     private final CurrencyConverterService currencyConverterService;
     private final CurrencyAnalyticsService currencyAnalyticsService;
 
-    //TODO ADD validations on requests
+    //TODO Validate Requests and Handle Validations
 
     @PostMapping
-    public ResponseEntity<Response<Map<String, String>>> loadData(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Response<Map<String, String>>> loadData(
+            @RequestParam("file") MultipartFile file
+    ) {
 
         String filenameExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
         if(filenameExtension == null) {
@@ -50,10 +54,9 @@ public class ExchangeRateController {
 
     @GetMapping
     public ResponseEntity<Response<Set<CurrencyRate>>> getExchangeRateForData(
-            @RequestParam("date") String date,
+            @RequestParam(value = "date", required = false)  @NotBlank String date,
             @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat
     ) {
-
         try {
             //TODO Maybe we can add sorting and pagination
             Set<CurrencyRate> exchangeRates = exchangeRateReadService.getExchangeRates(date, dateFormat);
@@ -62,17 +65,17 @@ public class ExchangeRateController {
             ErrorCode errorCode = e.getErrorCode();
             ErrorMessage errorMessage = e.getErrorMessage();
             ErrorDetail errorDetail = new ErrorDetail(errorCode, errorMessage.getMessage(), errorMessage.getDetails());
-            return ResponseEntity.ok(Response.<Set<CurrencyRate>>builder().content(Set.of()).error(errorDetail).build());
+            return ResponseEntity.ok(Response.<Set<CurrencyRate>>builder().content(Set.of()).errors(List.of(errorDetail)).build());
         }
     }
 
     @GetMapping("/convert")
     public ResponseEntity<Response<Map<String, Double>>> convertCurrency(
-            @RequestParam("date") String date,
+            @RequestParam(value = "date", required = false) @NotBlank String date,
             @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat,
-            @RequestParam("sourceCurrency") String sourceCurrency,
-            @RequestParam("targetCurrency") String targetCurrency,
-            @RequestParam("amount") Double amount
+            @RequestParam(value = "sourceCurrency", required = false) @NotBlank String sourceCurrency,
+            @RequestParam(value = "targetCurrency", required = false) @NotBlank String targetCurrency,
+            @RequestParam(value = "amount", required = false) @NotBlankPositive Double amount
     ) {
         Double convertedAmount = currencyConverterService.convertCurrencyAmount(date, dateFormat, sourceCurrency, targetCurrency, amount);
         return ResponseEntity.ok(Response.<Map<String, Double>>builder().content(Map.of("convertedAmount", convertedAmount)).build());
@@ -80,24 +83,24 @@ public class ExchangeRateController {
 
     @GetMapping("/analytics/max")
     public ResponseEntity<Response<Map<String, Double>>> getHighestReferenceRate(
-            @RequestParam("startDate") String startDateString,
-            @RequestParam("endDate") String endDateString,
+            @RequestParam(value = "startDate", required = false)  @NotBlank String startDate,
+            @RequestParam(value = "endDate", required = false)  @NotBlank String endDate,
             @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat,
-            @RequestParam("currency") String currency
+            @RequestParam(value = "currency", required = false)  @NotBlank String currency
     ) {
-        Double highestReferenceRate = currencyAnalyticsService.getHighestReferenceRate(startDateString, endDateString, dateFormat, currency);
+        Double highestReferenceRate = currencyAnalyticsService.getHighestReferenceRate(startDate, endDate, dateFormat, currency);
         return ResponseEntity.ok(Response.<Map<String, Double>>builder().content(Map.of("highestReferenceRate", highestReferenceRate)).build());
 
     }
 
     @GetMapping("/analytics/average")
     public ResponseEntity<Response<Map<String, Double>>> getAverageReferenceRate(
-            @RequestParam("startDate") String startDateString,
-            @RequestParam("endDate") String endDateString,
+            @RequestParam(value = "startDate", required = false)  @NotBlank String startDate,
+            @RequestParam(value = "endDate", required = false)  @NotBlank String endDate,
             @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat,
-            @RequestParam("currency") String currency
+            @RequestParam(value = "currency", required = false)  @NotBlank String currency
     ) {
-        Double averageReferenceRate = currencyAnalyticsService.getAverageReferenceRate(startDateString, endDateString, dateFormat, currency);
+        Double averageReferenceRate = currencyAnalyticsService.getAverageReferenceRate(startDate, endDate, dateFormat, currency);
         return ResponseEntity.ok(Response.<Map<String, Double>>builder().content(Map.of("averageReferenceRate", averageReferenceRate)).build());
     }
 

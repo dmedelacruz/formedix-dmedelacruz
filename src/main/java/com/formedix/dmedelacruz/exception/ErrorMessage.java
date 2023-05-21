@@ -4,7 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorMessage {
-    REQUIRED_PARAMETER_MISSING("Required Parameter '%s' is not present", "Make sure required parameter is present and is not empty"),
+    DEFAULT_ERROR_MESSAGE("Uh Oh. Something went wrong. Contact the admin for assistance.", "Uh Oh. Something went wrong. Contact the admin for assistance."),
+    REQUIRED_PARAMETER_MISSING("Required Parameter '%s' is not present or is blank", "Make sure required parameter is present and is not empty"),
+    REQUIRED_NUMERIC_PARAMETER("Required Parameter: '%s' must be numeric", "Make sure value is strictly numeric"),
+    REQUIRED_POSITIVE_NUMERIC_PARAMETER("Required Parameter: '%s' must be not be blank and greater than zero (0)", "Make sure value is not blank and strictly greater than zero (0)"),
     FILE_TYPE_NOT_SUPPORTED("File Type: '%s' Not Supported", "Currently supporting only CSV Files for this version."),
     UNKNOWN_FILE_TYPE("Unknown File Type: '%s'", "File Extension may be invalid or empty."),
     NO_DATA_FOR_DATE("No Data For Specified Date", "No existing records for specified date. No Records available for weekends."),
