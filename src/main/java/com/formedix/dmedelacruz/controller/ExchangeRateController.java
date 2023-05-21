@@ -36,15 +36,15 @@ public class ExchangeRateController {
     @PostMapping
     public ResponseEntity<Response<Map<String, String>>> loadData(@RequestParam("file") MultipartFile file) {
 
+        String filenameExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+        if(filenameExtension == null) {
+            throw new UnsupportedFileTypeException(ErrorCode.FILE_002, ErrorMessage.UNKNOWN_FILE_TYPE, null);
+        }
         try {
-            String filenameExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-            if(filenameExtension == null) {
-                throw new UnsupportedFileTypeException(ErrorCode.FILE_002, ErrorMessage.UNKNOWN_FILE_TYPE);
-            }
             FileProcessorFactory.getFileProcessor(FileType.valueOfIgnoreCase(filenameExtension)).processData(file);
             return ResponseEntity.ok(Response.<Map<String, String>>builder().content(Map.of("status", "Success")).build());
         } catch (IllegalArgumentException i) {
-            throw new UnsupportedFileTypeException(ErrorCode.FILE_002, ErrorMessage.UNKNOWN_FILE_TYPE);
+            throw new UnsupportedFileTypeException(ErrorCode.FILE_002, ErrorMessage.UNKNOWN_FILE_TYPE, filenameExtension);
         }
     }
 

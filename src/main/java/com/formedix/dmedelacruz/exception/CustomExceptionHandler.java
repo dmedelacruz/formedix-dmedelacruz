@@ -7,24 +7,61 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+
     @ExceptionHandler(value = {
-            CurrencyNotFoundException.class,
             DataNotFoundException.class,
-            ExchangeRateUnavailableException.class,
-            UnsupportedFileTypeException.class,
     })
-    protected ResponseEntity<Response> badRequestExceptionHandler(AbstractException ex) {
+    protected ResponseEntity<Response> dataNotFoundExceptionHandler(DataNotFoundException ex) {
         ErrorCode errorCode = ex.getErrorCode();
         ErrorMessage errorMessage = ex.getErrorMessage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Response.builder().error(new ErrorDetail(errorCode, errorMessage.getMessage(), errorMessage.getDetails())).build());
+    }
+
+    @ExceptionHandler(value = {
+            CurrencyNotFoundException.class
+    })
+    protected ResponseEntity<Response> currencyNotFoundExceptionHandler(CurrencyNotFoundException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
+        ErrorMessage errorMessage = ex.getErrorMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Response.builder().error(new ErrorDetail(
+                        errorCode,
+                        String.format(errorMessage.getMessage(), ex.getCode()),
+                        errorMessage.getDetails())).build());
+    }
+
+    @ExceptionHandler(value = {
+            UnsupportedFileTypeException.class
+    })
+    protected ResponseEntity<Response> unsupportedFileTypeExceptionHandler(UnsupportedFileTypeException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
+        ErrorMessage errorMessage = ex.getErrorMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Response.builder().error(new ErrorDetail(
+                        errorCode,
+                        String.format(errorMessage.getMessage(), ex.getFileType()),
+                        errorMessage.getDetails())).build());
+    }
+
+    @ExceptionHandler(value = {
+            ExchangeRateUnavailableException.class
+    })
+    protected ResponseEntity<Response> exchangeRateUnavailableExceptionHandler(ExchangeRateUnavailableException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
+        ErrorMessage errorMessage = ex.getErrorMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Response.builder().error(new ErrorDetail(
+                        errorCode,
+                        String.format(errorMessage.getMessage(), ex.getCode()),
+                        errorMessage.getDetails())).build());
     }
 
     @Override

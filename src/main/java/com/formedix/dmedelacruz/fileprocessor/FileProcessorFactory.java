@@ -23,7 +23,7 @@ public class FileProcessorFactory {
 
     public static FileProcessor getFileProcessor(FileType fileType) {
         FileProcessor fileProcessor = fileProcessorsMap.get(fileType);
-        if(fileProcessor == null) throw new UnsupportedFileTypeException(ErrorCode.FILE_001, ErrorMessage.FILE_TYPE_NOT_SUPPORTED);
+        if(fileProcessor == null) throw new UnsupportedFileTypeException(ErrorCode.FILE_001, ErrorMessage.FILE_TYPE_NOT_SUPPORTED, fileType.name());
         return fileProcessor;
     }
 }

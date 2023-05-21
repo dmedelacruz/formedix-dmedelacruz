@@ -45,11 +45,11 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
 
         if(exchangeRateMap.containsKey(code)) {
             if(exchangeRateMap.get(code).exchangeRate().equals(0.0)) {
-                throw new ExchangeRateUnavailableException(ErrorCode.CURR_002, ErrorMessage.NO_EXCHANGE_RATE_AVAILABLE);
+                throw new ExchangeRateUnavailableException(ErrorCode.CURR_002, ErrorMessage.NO_EXCHANGE_RATE_AVAILABLE, code);
             }
             return exchangeRateMap.get(code);
         } else {
-            throw new CurrencyNotFoundException(ErrorCode.CURR_001, ErrorMessage.CURRENCY_NOT_FOUND);
+            throw new CurrencyNotFoundException(ErrorCode.CURR_001, ErrorMessage.CURRENCY_NOT_FOUND, code);
         }
     }
 

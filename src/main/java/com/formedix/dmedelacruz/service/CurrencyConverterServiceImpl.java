@@ -14,12 +14,9 @@ class CurrencyConverterServiceImpl implements CurrencyConverterService {
 
     @Override
     public Double convertCurrencyAmount(String dateString, Optional<String> dateFormat, String sourceCurrency, String targetCurrency, Double amount) {
-
-        //TODO Check if Currency is available and not N/A
-
         CurrencyRate sourceCurrencyRate = exchangeRateReadService.getCurrencyRate(dateString, dateFormat, sourceCurrency);
         CurrencyRate targetCurrencyRate = exchangeRateReadService.getCurrencyRate(dateString, dateFormat, targetCurrency);
-        return amount * (targetCurrencyRate.exchangeRate() / sourceCurrencyRate.exchangeRate()); //TODO validate if conversion logic is correct
+        return amount * (targetCurrencyRate.exchangeRate() / sourceCurrencyRate.exchangeRate());
     }
 
 }
