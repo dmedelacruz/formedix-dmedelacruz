@@ -1,7 +1,5 @@
 package com.formedix.dmedelacruz.fileprocessor;
 
-import lombok.NonNull;
-
 public enum FileType {
     CSV, PDF, XML;
 
