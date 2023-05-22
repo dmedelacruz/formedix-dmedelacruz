@@ -1,6 +1,9 @@
 package com.formedix.dmedelacruz.fileprocessor;
 
 import com.formedix.dmedelacruz.data.CurrencyRate;
+import com.formedix.dmedelacruz.exception.constant.ErrorCode;
+import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
+import com.formedix.dmedelacruz.exception.FileReadException;
 import com.formedix.dmedelacruz.service.ExchangeRateWriteService;
 import com.formedix.dmedelacruz.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -29,10 +31,10 @@ class CsvFileProcessor implements FileProcessor {
                 processRecordLine(exchangeRateMap, scanner.nextLine());
             }
             exchangeRateWriteService.saveExchangeRate(exchangeRateMap);
-        }  catch (ParseException pe) {
-            //TODO
         } catch (IOException e) {
-            //TODO
+            throw new FileReadException(ErrorCode.REQ_004, ErrorMessage.FILE_READ_ERROR);
+        } catch (NoSuchElementException n) {
+            throw new FileReadException(ErrorCode.REQ_005, ErrorMessage.FILE_EMPTY_ERROR);
         }
     }
 
@@ -43,7 +45,7 @@ class CsvFileProcessor implements FileProcessor {
         }
     }
 
-    private void processRecordLine(Map<LocalDate, Map<String, CurrencyRate>> exchangeRateMap, String recordLine) throws ParseException {
+    private void processRecordLine(Map<LocalDate, Map<String, CurrencyRate>> exchangeRateMap, String recordLine) {
 
         String[] values = recordLine.split(",");
         String dateString = values[0];

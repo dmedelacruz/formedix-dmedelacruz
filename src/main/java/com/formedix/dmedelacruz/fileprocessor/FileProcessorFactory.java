@@ -1,7 +1,7 @@
 package com.formedix.dmedelacruz.fileprocessor;
 
-import com.formedix.dmedelacruz.exception.ErrorCode;
-import com.formedix.dmedelacruz.exception.ErrorMessage;
+import com.formedix.dmedelacruz.exception.constant.ErrorCode;
+import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import com.formedix.dmedelacruz.exception.UnsupportedFileTypeException;
 import org.springframework.stereotype.Component;
 

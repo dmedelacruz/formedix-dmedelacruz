@@ -1,7 +1,7 @@
 package com.formedix.dmedelacruz.controller;
 
-import com.formedix.dmedelacruz.exception.ErrorCode;
-import com.formedix.dmedelacruz.exception.ErrorMessage;
+import com.formedix.dmedelacruz.exception.constant.ErrorCode;
+import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

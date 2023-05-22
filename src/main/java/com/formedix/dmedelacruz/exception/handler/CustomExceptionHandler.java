@@ -1,12 +1,16 @@
-package com.formedix.dmedelacruz.exception;
+package com.formedix.dmedelacruz.exception.handler;
 
 import com.formedix.dmedelacruz.dto.ErrorDetail;
 import com.formedix.dmedelacruz.dto.Response;
+import com.formedix.dmedelacruz.exception.*;
+import com.formedix.dmedelacruz.exception.constant.ErrorCode;
+import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
@@ -22,6 +26,17 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorMessage errorMessage = ex.getErrorMessage();
         ErrorDetail errorDetail = new ErrorDetail(errorCode, errorMessage.getMessage(), errorMessage.getDetails());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Response.builder().errors(List.of(errorDetail)).build());
+    }
+
+    @ExceptionHandler(value = {
+            FileReadException.class,
+    })
+    protected ResponseEntity<Response> fileReadExceptionhandler(FileReadException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
+        ErrorMessage errorMessage = ex.getErrorMessage();
+        ErrorDetail errorDetail = new ErrorDetail(errorCode, errorMessage.getMessage(), errorMessage.getDetails());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(Response.builder().errors(List.of(errorDetail)).build());
     }
 
@@ -77,6 +92,19 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorMessage.getMessage()), errorMessage.getDetails());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Response.builder().errors(List.of(errorDetail)).build());
+    }
+
+    @ExceptionHandler(value = {
+            MultipartException.class
+    })
+    protected ResponseEntity<Response> MultipartExceptionHandler(MultipartException ex) {
+
+        ErrorCode errorCode = ErrorCode.REQ_001;
+        ErrorMessage errorMessage = ErrorMessage.REQUIRED_PARAMETER_MISSING;
+
+        ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorMessage.getMessage(), "file"), errorMessage.getDetails());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Response.builder().errors(List.of(errorDetail)).build());
     }

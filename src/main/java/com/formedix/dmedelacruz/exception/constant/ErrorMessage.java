@@ -1,4 +1,4 @@
-package com.formedix.dmedelacruz.exception;
+package com.formedix.dmedelacruz.exception.constant;
 
 import lombok.Getter;
 
@@ -10,6 +10,8 @@ public enum ErrorMessage {
     REQUIRED_POSITIVE_NUMERIC_PARAMETER("Required Parameter: '%s' must be not be blank and greater than zero (0)", "Make sure value is not blank and strictly greater than zero (0)"),
     FILE_TYPE_NOT_SUPPORTED("File Type: '%s' Not Supported", "Currently supporting only CSV Files for this version."),
     UNKNOWN_FILE_TYPE("Unknown File Type: '%s'", "File Extension may be invalid or empty."),
+    FILE_READ_ERROR("Processing File Failed", "Please contact support team"),
+    FILE_EMPTY_ERROR("Provided File is empty", "Make Sure File has contents"),
     NO_DATA_FOR_DATE("No Data For Specified Date", "No existing records for specified date. No Records available for weekends."),
     NO_DATA_FOR_DATE_RANGE("No Date For Specified Date Range", "No existing records for specified date range."),
     CURRENCY_NOT_FOUND("Unknown Currency: '%s'", "Make sure currency is a valid currency"),

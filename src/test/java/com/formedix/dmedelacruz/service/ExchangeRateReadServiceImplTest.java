@@ -5,63 +5,40 @@ import com.formedix.dmedelacruz.exception.CurrencyNotFoundException;
 import com.formedix.dmedelacruz.exception.DataNotFoundException;
 import com.formedix.dmedelacruz.exception.ExchangeRateUnavailableException;
 import com.formedix.dmedelacruz.util.DateUtil;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpMethod;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class ExchangeRateReadServiceImplTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class ExchangeRateReadServiceImplTest extends BaseTest {
 
     @Autowired
     private ExchangeRateReadService exchangeRateReadService;
 
-    @BeforeEach
-    public void init() throws IOException {
-        File file = ResourceUtils.getFile("classpath:eurofxref-hist.csv");
-        try(FileInputStream inputStream = new FileInputStream(file)) {
-            MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "eurofxref-hist.csv", null, inputStream);
-            MockMultipartHttpServletRequestBuilder servletRequest = MockMvcRequestBuilders.multipart(HttpMethod.POST, "/forex/load").file(mockMultipartFile);
-            mockMvc.perform(servletRequest)
-                    .andDo(print())
-                    .andExpect(status().isOk());
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    protected ExchangeRateReadServiceImplTest(@Autowired MockMvc mockMvc) {
+        super(mockMvc);
     }
 
     @Nested
     class TestGetExchangeRates {
 
         @Test
+        @DisplayName("Test Getting Exchange Rates With Correct Date - Should Return NonEmpty Set Result")
         void testGetExchangeRates() {
             String dateString = "2015-05-19";
             Set<CurrencyRate> exchangeRates = exchangeRateReadService.getExchangeRates(dateString, Optional.empty());
@@ -70,6 +47,7 @@ class ExchangeRateReadServiceImplTest {
         }
 
         @Test
+        @DisplayName("Test Getting Exchange Rates With Incorrect Date - Should Throw DataNotFoundException")
         void testGetExchangeRatesNoData() {
             String dateString = "2024-05-19";
             assertThrows(DataNotFoundException.class, () -> exchangeRateReadService.getExchangeRates(dateString, Optional.empty()));
@@ -80,7 +58,7 @@ class ExchangeRateReadServiceImplTest {
     @Nested
     class TestGetExchangeRatesRange {
 
-        @Test
+        @Test@DisplayName("Test Getting Exchange Rates With Incorrect Date Range - Should Throw DataNotFoundException")
         void testGetExchangeRatesRangeNoData() {
             String startDateString = "2024-05-19";
             String endDateString = "2024-07-21";
@@ -88,6 +66,7 @@ class ExchangeRateReadServiceImplTest {
         }
 
         @Test
+        @DisplayName("Test Getting Exchange Rates With Correct Date Range - Should Return NonEmpty Map Result")
         void testGetExchangeRatesRange() {
             String startDateString = "2023-05-15";
             String endDateString = "2023-05-19";
@@ -111,6 +90,7 @@ class ExchangeRateReadServiceImplTest {
     class TestGetCurrencyRate {
 
         @Test
+        @DisplayName("Test Getting Currency Exchange Rate With Incorrect Date - Should Throw DataNotFoundException")
         void testNoDataForDate() {
             String date = "2024-05-30";
             String code = "USD";
@@ -118,6 +98,7 @@ class ExchangeRateReadServiceImplTest {
         }
 
         @Test
+        @DisplayName("Test Getting Currency Exchange Rate With N/A Rate - Should Throw ExchangeRateUnavailableException")
         void testExchangeRateUnavailable() {
             String date = "2023-05-19";
             String code = "CYP";
@@ -125,6 +106,7 @@ class ExchangeRateReadServiceImplTest {
         }
 
         @Test
+        @DisplayName("Test Getting Currency Exchange Rate With Unknown Currency - Should Throw CurrencyNotFoundException")
         void testCurrencyNotFound() {
             String date = "2023-05-19";
             String code = "UNKNOWN";
@@ -132,6 +114,7 @@ class ExchangeRateReadServiceImplTest {
         }
 
         @Test
+        @DisplayName("Test Getting Currency Exchange Rate With Valid Arguments - Should Return NonNull CurrencyRate")
         void testGetCurrencyRateSuccess() {
             String date = "2023-05-19";
             String code = "USD";

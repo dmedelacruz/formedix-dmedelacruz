@@ -1,7 +1,9 @@
-package com.formedix.dmedelacruz.exception;
+package com.formedix.dmedelacruz.exception.handler;
 
 import com.formedix.dmedelacruz.dto.ErrorDetail;
 import com.formedix.dmedelacruz.dto.Response;
+import com.formedix.dmedelacruz.exception.constant.ErrorCode;
+import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import com.formedix.dmedelacruz.validation.NotBlankPositive;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotBlank;
