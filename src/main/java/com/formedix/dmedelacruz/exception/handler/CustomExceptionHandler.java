@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -24,6 +25,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {
             DataNotFoundException.class,
     })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Response> dataNotFoundExceptionHandler(DataNotFoundException ex) {
         ErrorCode errorCode = ex.getErrorCode();
         ErrorDetail errorDetail = new ErrorDetail(errorCode, errorCode.getMessage(), errorCode.getDetails());
@@ -34,6 +36,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {
             FileReadException.class,
     })
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     protected ResponseEntity<Response> fileReadExceptionhandler(FileReadException ex) {
         ErrorCode errorCode = ex.getErrorCode();
         ErrorDetail errorDetail = new ErrorDetail(errorCode, errorCode.getMessage(), errorCode.getDetails());
@@ -44,6 +47,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {
             CurrencyNotFoundException.class
     })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Response> currencyNotFoundExceptionHandler(CurrencyNotFoundException ex) {
         ErrorCode errorCode = ex.getErrorCode();
         ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorCode.getMessage(), ex.getCode()), errorCode.getDetails());
@@ -54,6 +58,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {
             UnsupportedFileTypeException.class
     })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Response> unsupportedFileTypeExceptionHandler(UnsupportedFileTypeException ex) {
         ErrorCode errorCode = ex.getErrorCode();
         ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorCode.getMessage(), ex.getFileType()), errorCode.getDetails());
@@ -64,6 +69,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {
             ExchangeRateUnavailableException.class
     })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Response> exchangeRateUnavailableExceptionHandler(ExchangeRateUnavailableException ex) {
         ErrorCode errorCode = ex.getErrorCode();
         ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorCode.getMessage(), ex.getCode()), errorCode.getDetails());
@@ -74,6 +80,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {
             MethodArgumentTypeMismatchException.class
     })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Response> methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException ex) {
         ErrorCode errorCode = ErrorCode.DEF_001;
         if (ex.getRequiredType() != null && ex.getRequiredType().equals(Double.class)) {
@@ -91,6 +98,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {
             MultipartException.class
     })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Response> multipartExceptionHandler(MultipartException ex) {
         ErrorCode errorCode = ErrorCode.REQ_001;
         ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorCode.getMessage(), "file"), errorCode.getDetails());
@@ -99,6 +107,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ErrorCode errorCode = ErrorCode.REQ_001;
         ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorCode.getMessage(), "file"), errorCode.getDetails());

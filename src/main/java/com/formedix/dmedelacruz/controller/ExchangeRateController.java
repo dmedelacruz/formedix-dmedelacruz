@@ -12,8 +12,11 @@ import com.formedix.dmedelacruz.service.CurrencyAnalyticsService;
 import com.formedix.dmedelacruz.service.CurrencyConverterService;
 import com.formedix.dmedelacruz.service.ExchangeRateReadService;
 import com.formedix.dmedelacruz.validation.NotBlankPositive;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -32,9 +35,11 @@ public class ExchangeRateController {
     private final CurrencyConverterService currencyConverterService;
     private final CurrencyAnalyticsService currencyAnalyticsService;
 
-    @PostMapping("/load")
+    @Operation(summary = "Load Exchange Rate Data From File. Must Not Be Empty and Currently Only Supports CSV")
+    @PostMapping(value = "/load", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Response<Map<String, String>>> loadData(
-            @RequestParam("file") MultipartFile file
+            @Parameter(description = "File to be uploaded")
+                @RequestPart("file") final MultipartFile file
     ) {
 
         String filenameExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
@@ -49,10 +54,13 @@ public class ExchangeRateController {
         }
     }
 
+    @Operation(summary = "Get A List of Exchange Rates For A Given Date")
     @GetMapping("/rates")
     public ResponseEntity<Response<Set<CurrencyRate>>> getExchangeRateForDate(
-            @RequestParam(value = "date", required = false)  @NotBlank String date,
-            @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat
+            @Parameter(description = "Specific Date For Exchange Rate Values", example = "yyyy-MM-dd")
+                @RequestParam(value = "date", required = false)  @NotBlank String date,
+            @Parameter(description = "Date Format Of Provided Date", allowEmptyValue = true, example = "yyyy-MM-dd")
+                @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat
     ) {
         try {
             Set<CurrencyRate> exchangeRates = exchangeRateReadService.getExchangeRates(date, dateFormat);
@@ -64,35 +72,51 @@ public class ExchangeRateController {
         }
     }
 
+    @Operation(summary = "Convert A Given Amount From A Specific Currency To A Target Currency")
     @GetMapping("/convert")
     public ResponseEntity<Response<Map<String, Double>>> convertCurrency(
-            @RequestParam(value = "date", required = false) @NotBlank String date,
-            @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat,
-            @RequestParam(value = "sourceCurrency", required = false) @NotBlank String sourceCurrency,
-            @RequestParam(value = "targetCurrency", required = false) @NotBlank String targetCurrency,
-            @RequestParam(value = "amount", required = false) @NotBlankPositive Double amount
+            @Parameter(description = "Specific Date For Exchange Rate Value", example = "yyyy-MM-dd")
+                @RequestParam(value = "date", required = false) @NotBlank String date,
+            @Parameter(description = "Date Format Of Provided Date", allowEmptyValue = true, example = "yyyy-MM-dd")
+                @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat,
+            @Parameter(description = "Currency Of Given Amount", example = "USD")
+                @RequestParam(value = "sourceCurrency", required = false) @NotBlank String sourceCurrency,
+            @Parameter(description = "Resulting Currency Of Resulting Amount", example = "JPY")
+                @RequestParam(value = "targetCurrency", required = false) @NotBlank String targetCurrency,
+            @Parameter(description = "Amount To Be Converted. Must Be A Positive Value", example = "100")
+                @RequestParam(value = "amount", required = false) @NotBlankPositive Double amount
     ) {
         Double convertedAmount = currencyConverterService.convertCurrencyAmount(date, dateFormat, sourceCurrency, targetCurrency, amount);
         return ResponseEntity.ok(Response.<Map<String, Double>>builder().content(Map.of("convertedAmount", convertedAmount)).build());
     }
 
+    @Operation(summary = "Get The Highest Exchange Rate Of A Specific Currency For A Given Date Range")
     @GetMapping("/analytics/max")
     public ResponseEntity<Response<Map<String, Double>>> getHighestReferenceRate(
-            @RequestParam(value = "startDate", required = false)  @NotBlank String startDate,
-            @RequestParam(value = "endDate", required = false)  @NotBlank String endDate,
-            @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat,
-            @RequestParam(value = "currency", required = false)  @NotBlank String currency
+            @Parameter(description = "Start Date. Must Be Greater Than End Date", example = "yyyy-MM-dd")
+                @RequestParam(value = "startDate", required = false)  @NotBlank String startDate,
+            @Parameter(description = "End Date. Must Be Greater Than Start Date", example = "yyyy-MM-dd")
+                @RequestParam(value = "endDate", required = false)  @NotBlank String endDate,
+            @Parameter(description = "Date Format Of Provided Date", allowEmptyValue = true, example = "yyyy-MM-dd")
+                @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat,
+            @Parameter(description = "Specific Currency In Question", example = "USD")
+                @RequestParam(value = "currency", required = false)  @NotBlank String currency
     ) {
         Double highestReferenceRate = currencyAnalyticsService.getHighestReferenceRate(startDate, endDate, dateFormat, currency);
         return ResponseEntity.ok(Response.<Map<String, Double>>builder().content(Map.of("highestReferenceRate", highestReferenceRate)).build());
 
     }
 
+    @Operation(summary = "Get The Average Exchange Rate Of A Specific Currency For A Given Date Range")
     @GetMapping("/analytics/average")
     public ResponseEntity<Response<Map<String, Double>>> getAverageReferenceRate(
+            @Parameter(description = "Start Date. Must Be Greater Than End Date", example = "yyyy-MM-dd")
             @RequestParam(value = "startDate", required = false)  @NotBlank String startDate,
+            @Parameter(description = "End Date. Must Be Greater Than Start Date", example = "yyyy-MM-dd")
             @RequestParam(value = "endDate", required = false)  @NotBlank String endDate,
+            @Parameter(description = "Date Format Of Provided Date", allowEmptyValue = true, example = "yyyy-MM-dd")
             @RequestParam(value = "dateFormat", required = false) Optional<String> dateFormat,
+            @Parameter(description = "Specific Currency In Question", example = "USD")
             @RequestParam(value = "currency", required = false)  @NotBlank String currency
     ) {
         Double averageReferenceRate = currencyAnalyticsService.getAverageReferenceRate(startDate, endDate, dateFormat, currency);
