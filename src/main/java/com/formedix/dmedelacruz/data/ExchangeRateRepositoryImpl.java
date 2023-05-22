@@ -17,7 +17,7 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
     }
 
     @Override
-    public Map<String, CurrencyRate> getExchangeRates(LocalDate date) {
+    public Map<String, CurrencyRate> getExchangeRatesRange(LocalDate date) {
         Map<LocalDate, Map<String, CurrencyRate>> exchangeRateMap = ExchangeRate.getExchangeRateMap();
         if(exchangeRateMap.containsKey(date)) {
             return exchangeRateMap.get(date);
@@ -27,7 +27,7 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
     }
 
     @Override
-    public Map<LocalDate, Map<String, CurrencyRate>> getExchangeRates(LocalDate startDate, LocalDate endDate) {
+    public Map<LocalDate, Map<String, CurrencyRate>> getExchangeRatesRange(LocalDate startDate, LocalDate endDate) {
         SortedMap<LocalDate, Map<String, CurrencyRate>> exchangeRateMap = ExchangeRate.getExchangeRateMap();
         SortedMap<LocalDate, Map<String, CurrencyRate>> subMap = exchangeRateMap.subMap(startDate, endDate.plusDays(1));
         if(subMap.isEmpty()) {

@@ -4,6 +4,7 @@ import com.formedix.dmedelacruz.data.CurrencyRate;
 import com.formedix.dmedelacruz.exception.CurrencyNotFoundException;
 import com.formedix.dmedelacruz.exception.DataNotFoundException;
 import com.formedix.dmedelacruz.exception.ExchangeRateUnavailableException;
+import com.formedix.dmedelacruz.exception.InvalidDateRangeException;
 import com.formedix.dmedelacruz.util.DateUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -63,6 +64,13 @@ class ExchangeRateReadServiceImplTest extends BaseTest {
             String startDateString = "2024-05-19";
             String endDateString = "2024-07-21";
             assertThrows(DataNotFoundException.class, () -> exchangeRateReadService.getExchangeRatesRange(startDateString, endDateString, Optional.empty()));
+        }
+
+        @Test@DisplayName("Test Getting Exchange Rates With Incorrect Date Range - Should Throw DataNotFoundException")
+        void testGetExchangeRatesRangeInvalidDateRange() {
+            String startDateString = "2020-05-19";
+            String endDateString = "2019-07-21";
+            assertThrows(InvalidDateRangeException.class, () -> exchangeRateReadService.getExchangeRatesRange(startDateString, endDateString, Optional.empty()));
         }
 
         @Test

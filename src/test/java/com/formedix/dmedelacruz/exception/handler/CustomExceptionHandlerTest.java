@@ -100,6 +100,14 @@ class CustomExceptionHandlerTest {
     }
 
     @Test
+    void testInvalidDateRangeExceptionHandler() {
+        final InvalidDateRangeException ex = Mockito.mock(InvalidDateRangeException.class);
+        ErrorCode errorCode = ErrorCode.REQ_004;
+        ResponseEntity<Response> responseEntity = handler.invalidDateRangeExceptionHandler(ex);
+        validate(responseEntity, HttpStatus.BAD_REQUEST, errorCode, "file");
+    }
+
+    @Test
     void testHandleMissingServletRequestPart() {
         HttpHeaders httpHeaders = Mockito.mock(HttpHeaders.class);
         HttpStatus expectedStatusCode = HttpStatus.BAD_REQUEST;

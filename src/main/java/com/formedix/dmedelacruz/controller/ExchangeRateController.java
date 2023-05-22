@@ -38,7 +38,7 @@ public class ExchangeRateController {
     @Operation(summary = "Load Exchange Rate Data From File. Must Not Be Empty and Currently Only Supports CSV")
     @PostMapping(value = "/load", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Response<Map<String, String>>> loadData(
-            @Parameter(description = "File to be uploaded")
+            @Parameter(description = "File to be uploaded. Currently Only Supporting CSV Files.")
                 @RequestPart("file") final MultipartFile file
     ) {
 

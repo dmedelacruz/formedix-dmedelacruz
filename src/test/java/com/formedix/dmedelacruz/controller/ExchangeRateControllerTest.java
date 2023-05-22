@@ -509,6 +509,27 @@ class ExchangeRateControllerTest {
         }
 
         @Test
+        @DisplayName("Test Get Highest Reference Rate With Start Date After End Date - Should Return 400 With Errors")
+        void testInvalidDateRange() throws Exception {
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("startDate", "2020-05-19");
+            params.add("endDate", "2019-07-21");
+            params.add("currency", "USD");
+
+            MockHttpServletRequestBuilder servletRequest = MockMvcRequestBuilders.get(URL_PATH).params(params);
+            mockMvc.perform(servletRequest)
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.content").doesNotExist())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors").exists())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isArray())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors[*].code").value(ErrorCode.REQ_004.toString()))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors[*].message").value(String.format(ErrorCode.REQ_004.getMessage())))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors[*].details").value(ErrorCode.REQ_004.getDetails()));
+        }
+
+        @Test
         @DisplayName("Test Get Highest Reference Rate With Unknown Currency - Should Return 400 With Errors")
         void testUnknownCurrency() throws Exception {
 
@@ -646,6 +667,27 @@ class ExchangeRateControllerTest {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errors[*].code").value(ErrorCode.DATA_002.toString()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errors[*].message").value(String.format(ErrorCode.DATA_002.getMessage())))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errors[*].details").value(ErrorCode.DATA_002.getDetails()));
+        }
+
+        @Test
+        @DisplayName("Test Get Average Reference Rate With Start Date Greater Than End Date - Should Return 400 With Errors")
+        void testInvalidDateRange() throws Exception {
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("startDate", "2020-05-19");
+            params.add("endDate", "2019-07-21");
+            params.add("currency", "USD");
+
+            MockHttpServletRequestBuilder servletRequest = MockMvcRequestBuilders.get(URL_PATH).params(params);
+            mockMvc.perform(servletRequest)
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.content").doesNotExist())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors").exists())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isArray())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors[*].code").value(ErrorCode.REQ_004.toString()))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors[*].message").value(String.format(ErrorCode.REQ_004.getMessage())))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errors[*].details").value(ErrorCode.REQ_004.getDetails()));
         }
 
         @Test

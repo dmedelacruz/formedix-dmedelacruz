@@ -106,6 +106,17 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(Response.builder().errors(List.of(errorDetail)).build());
     }
 
+    @ExceptionHandler(value = {
+            InvalidDateRangeException.class
+    })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<Response> invalidDateRangeExceptionHandler(InvalidDateRangeException ex) {
+        ErrorCode errorCode = ErrorCode.REQ_004;
+        ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorCode.getMessage()), errorCode.getDetails());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Response.builder().errors(List.of(errorDetail)).build());
+    }
+
     @Override
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {

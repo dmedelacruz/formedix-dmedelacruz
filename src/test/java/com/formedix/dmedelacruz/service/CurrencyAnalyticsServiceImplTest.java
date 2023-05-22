@@ -2,6 +2,7 @@ package com.formedix.dmedelacruz.service;
 
 import com.formedix.dmedelacruz.exception.CurrencyNotFoundException;
 import com.formedix.dmedelacruz.exception.DataNotFoundException;
+import com.formedix.dmedelacruz.exception.InvalidDateRangeException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,16 @@ class CurrencyAnalyticsServiceImplTest extends BaseTest {
             String code = "USD";
 
             assertThrows(DataNotFoundException.class, () -> currencyAnalyticsService.getHighestReferenceRate(startDateString, endDateString, Optional.empty(), code));
+        }
+
+        @Test
+        @DisplayName("Test Get Highest Reference Rate With Incorrect Date Range - Should Throw InvalidDateRangeException")
+        void testGetHighestReferenceRateInvalidDateRange() {
+            String startDateString = "2020-05-19";
+            String endDateString = "2019-07-21";
+            String code = "USD";
+
+            assertThrows(InvalidDateRangeException.class, () -> currencyAnalyticsService.getHighestReferenceRate(startDateString, endDateString, Optional.empty(), code));
         }
 
         @Test
@@ -88,6 +99,16 @@ class CurrencyAnalyticsServiceImplTest extends BaseTest {
             String code = "USD";
 
             assertThrows(DataNotFoundException.class, () -> currencyAnalyticsService.getAverageReferenceRate(startDateString, endDateString, Optional.empty(), code));
+        }
+
+        @Test
+        @DisplayName("Test Get Average Reference Rate With Incorrect Date Range - Should Throw InvalidDateRangeException")
+        void testGetAverageReferenceRateInvalidDateRange() {
+            String startDateString = "2020-05-19";
+            String endDateString = "2019-07-21";
+            String code = "USD";
+
+            assertThrows(InvalidDateRangeException.class, () -> currencyAnalyticsService.getAverageReferenceRate(startDateString, endDateString, Optional.empty(), code));
         }
 
         @Test
