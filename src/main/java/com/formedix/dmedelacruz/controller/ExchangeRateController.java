@@ -5,7 +5,6 @@ import com.formedix.dmedelacruz.dto.Response;
 import com.formedix.dmedelacruz.data.CurrencyRate;
 import com.formedix.dmedelacruz.exception.DataNotFoundException;
 import com.formedix.dmedelacruz.exception.constant.ErrorCode;
-import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import com.formedix.dmedelacruz.exception.UnsupportedFileTypeException;
 import com.formedix.dmedelacruz.fileprocessor.FileProcessorFactory;
 import com.formedix.dmedelacruz.fileprocessor.FileType;
@@ -40,13 +39,13 @@ public class ExchangeRateController {
 
         String filenameExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
         if(filenameExtension == null) {
-            throw new UnsupportedFileTypeException(ErrorCode.FILE_002, ErrorMessage.UNKNOWN_FILE_TYPE, null);
+            throw new UnsupportedFileTypeException(ErrorCode.FILE_002, null);
         }
         try {
             FileProcessorFactory.getFileProcessor(FileType.valueOfIgnoreCase(filenameExtension)).processData(file);
             return ResponseEntity.ok(Response.<Map<String, String>>builder().content(Map.of("status", "Success")).build());
         } catch (IllegalArgumentException i) {
-            throw new UnsupportedFileTypeException(ErrorCode.FILE_002, ErrorMessage.UNKNOWN_FILE_TYPE, filenameExtension);
+            throw new UnsupportedFileTypeException(ErrorCode.FILE_002, filenameExtension);
         }
     }
 
@@ -60,8 +59,7 @@ public class ExchangeRateController {
             return ResponseEntity.ok(Response.<Set<CurrencyRate>>builder().content(exchangeRates).build());
         } catch (DataNotFoundException e) {
             ErrorCode errorCode = e.getErrorCode();
-            ErrorMessage errorMessage = e.getErrorMessage();
-            ErrorDetail errorDetail = new ErrorDetail(errorCode, errorMessage.getMessage(), errorMessage.getDetails());
+            ErrorDetail errorDetail = new ErrorDetail(errorCode, errorCode.getMessage(), errorCode.getDetails());
             return ResponseEntity.ok(Response.<Set<CurrencyRate>>builder().content(Set.of()).errors(List.of(errorDetail)).build());
         }
     }

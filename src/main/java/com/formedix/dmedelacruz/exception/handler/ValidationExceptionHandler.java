@@ -3,7 +3,6 @@ package com.formedix.dmedelacruz.exception.handler;
 import com.formedix.dmedelacruz.dto.ErrorDetail;
 import com.formedix.dmedelacruz.dto.Response;
 import com.formedix.dmedelacruz.exception.constant.ErrorCode;
-import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import com.formedix.dmedelacruz.validation.NotBlankPositive;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotBlank;
@@ -27,24 +26,20 @@ public class ValidationExceptionHandler {
             String field = violation.getPropertyPath().toString().split("\\.")[1];
 
             ErrorCode errorCode = ErrorCode.DEF_001;
-            ErrorMessage errorMessage = ErrorMessage.DEFAULT_ERROR_MESSAGE;
 
             if(violation.getConstraintDescriptor().getAnnotation() instanceof NotBlank) {
                 errorCode = ErrorCode.REQ_001;
-                errorMessage = ErrorMessage.REQUIRED_PARAMETER_MISSING;
             }
 
             if(violation.getConstraintDescriptor().getAnnotation() instanceof NotBlankPositive) {
                 errorCode = ErrorCode.REQ_003;
-                errorMessage = ErrorMessage.REQUIRED_POSITIVE_NUMERIC_PARAMETER;
             }
 
-            ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorMessage.getMessage(), field), errorMessage.getDetails());
+            ErrorDetail errorDetail = new ErrorDetail(errorCode, String.format(errorCode.getMessage(), field), errorCode.getDetails());
             errorDetails.add(errorDetail);
         });
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(Response.builder().errors(errorDetails).build());
     }
-
 
 }

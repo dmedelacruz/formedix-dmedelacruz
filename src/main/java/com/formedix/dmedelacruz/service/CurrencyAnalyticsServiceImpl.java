@@ -3,7 +3,6 @@ package com.formedix.dmedelacruz.service;
 import com.formedix.dmedelacruz.data.CurrencyRate;
 import com.formedix.dmedelacruz.exception.CurrencyNotFoundException;
 import com.formedix.dmedelacruz.exception.constant.ErrorCode;
-import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +40,7 @@ class CurrencyAnalyticsServiceImpl implements CurrencyAnalyticsService {
         Map<LocalDate, Map<String, CurrencyRate>> exchangeRatesRange = exchangeRateReadService.getExchangeRatesRange(startDateString, endDateString, dateFormat);
         exchangeRatesRange.values().stream().findFirst().ifPresent(map -> {
             if(!map.containsKey(code)) {
-                throw new CurrencyNotFoundException(ErrorCode.CURR_001, ErrorMessage.CURRENCY_NOT_FOUND, code);
+                throw new CurrencyNotFoundException(ErrorCode.CURR_001, code);
             }
         });
         return exchangeRatesRange;

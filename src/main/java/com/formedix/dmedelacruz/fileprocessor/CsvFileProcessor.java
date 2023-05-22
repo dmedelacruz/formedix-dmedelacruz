@@ -2,7 +2,6 @@ package com.formedix.dmedelacruz.fileprocessor;
 
 import com.formedix.dmedelacruz.data.CurrencyRate;
 import com.formedix.dmedelacruz.exception.constant.ErrorCode;
-import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import com.formedix.dmedelacruz.exception.FileReadException;
 import com.formedix.dmedelacruz.service.ExchangeRateWriteService;
 import com.formedix.dmedelacruz.util.DateUtil;
@@ -32,9 +31,9 @@ class CsvFileProcessor implements FileProcessor {
             }
             exchangeRateWriteService.saveExchangeRate(exchangeRateMap);
         } catch (IOException e) {
-            throw new FileReadException(ErrorCode.REQ_004, ErrorMessage.FILE_READ_ERROR);
+            throw new FileReadException(ErrorCode.FILE_004);
         } catch (NoSuchElementException n) {
-            throw new FileReadException(ErrorCode.REQ_005, ErrorMessage.FILE_EMPTY_ERROR);
+            throw new FileReadException(ErrorCode.FILE_003);
         }
     }
 

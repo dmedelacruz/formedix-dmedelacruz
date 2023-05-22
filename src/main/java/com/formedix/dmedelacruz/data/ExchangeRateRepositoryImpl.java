@@ -2,7 +2,6 @@ package com.formedix.dmedelacruz.data;
 
 import com.formedix.dmedelacruz.exception.*;
 import com.formedix.dmedelacruz.exception.constant.ErrorCode;
-import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,7 +22,7 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
         if(exchangeRateMap.containsKey(date)) {
             return exchangeRateMap.get(date);
         } else {
-            throw new DataNotFoundException(ErrorCode.DATA_001, ErrorMessage.NO_DATA_FOR_DATE);
+            throw new DataNotFoundException(ErrorCode.DATA_001);
         }
     }
 
@@ -32,7 +31,7 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
         SortedMap<LocalDate, Map<String, CurrencyRate>> exchangeRateMap = ExchangeRate.getExchangeRateMap();
         SortedMap<LocalDate, Map<String, CurrencyRate>> subMap = exchangeRateMap.subMap(startDate, endDate.plusDays(1));
         if(subMap.isEmpty()) {
-            throw new DataNotFoundException(ErrorCode.DATA_002, ErrorMessage.NO_DATA_FOR_DATE_RANGE);
+            throw new DataNotFoundException(ErrorCode.DATA_002);
         }
         return subMap;
     }
@@ -42,16 +41,16 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
         Map<String, CurrencyRate> exchangeRateMap = ExchangeRate.getExchangeRateMap().get(date);
 
         if(exchangeRateMap == null || exchangeRateMap.isEmpty()) {
-            throw new DataNotFoundException(ErrorCode.DATA_001, ErrorMessage.NO_DATA_FOR_DATE);
+            throw new DataNotFoundException(ErrorCode.DATA_001);
         }
 
         if(exchangeRateMap.containsKey(code)) {
             if(exchangeRateMap.get(code).exchangeRate().equals(0.0)) {
-                throw new ExchangeRateUnavailableException(ErrorCode.CURR_002, ErrorMessage.NO_EXCHANGE_RATE_AVAILABLE, code);
+                throw new ExchangeRateUnavailableException(ErrorCode.CURR_002, code);
             }
             return exchangeRateMap.get(code);
         } else {
-            throw new CurrencyNotFoundException(ErrorCode.CURR_001, ErrorMessage.CURRENCY_NOT_FOUND, code);
+            throw new CurrencyNotFoundException(ErrorCode.CURR_001, code);
         }
     }
 

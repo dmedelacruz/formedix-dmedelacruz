@@ -1,14 +1,13 @@
 package com.formedix.dmedelacruz.exception;
 
 import com.formedix.dmedelacruz.exception.constant.ErrorCode;
-import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 
 public class FileReadException extends AbstractException {
-    public FileReadException(ErrorCode errorCode, ErrorMessage errorMessage) {
-        super(errorCode, errorMessage);
+    public FileReadException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
-    public FileReadException(ErrorCode errorCode, ErrorMessage errorMessage, Throwable cause) {
-        super(errorCode, errorMessage, cause);
+    public FileReadException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
     }
 }

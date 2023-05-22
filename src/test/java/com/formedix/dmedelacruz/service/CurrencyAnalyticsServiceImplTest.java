@@ -45,7 +45,7 @@ class CurrencyAnalyticsServiceImplTest extends BaseTest {
         @DisplayName("Test Get Highest Reference Rate With Unknown Currency - Should Throw CurrencyNotFoundException")
         void testGetHighestReferenceRateUnknownCurrency() {
             String startDateString = "2023-05-19";
-            String endDateString = "2023-07-21";
+            String endDateString = "2023-05-21";
             String code = "UNKNOWN";
 
             assertThrows(CurrencyNotFoundException.class, () -> currencyAnalyticsService.getHighestReferenceRate(startDateString, endDateString, Optional.empty(), code));

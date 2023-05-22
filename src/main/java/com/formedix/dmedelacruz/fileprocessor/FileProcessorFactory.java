@@ -1,7 +1,6 @@
 package com.formedix.dmedelacruz.fileprocessor;
 
 import com.formedix.dmedelacruz.exception.constant.ErrorCode;
-import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import com.formedix.dmedelacruz.exception.UnsupportedFileTypeException;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +21,7 @@ public class FileProcessorFactory {
 
     public static FileProcessor getFileProcessor(FileType fileType) {
         FileProcessor fileProcessor = fileProcessorsMap.get(fileType);
-        if(fileProcessor == null) throw new UnsupportedFileTypeException(ErrorCode.FILE_001, ErrorMessage.FILE_TYPE_NOT_SUPPORTED, fileType.name());
+        if(fileProcessor == null) throw new UnsupportedFileTypeException(ErrorCode.FILE_001, fileType.name());
         return fileProcessor;
     }
 }

@@ -1,7 +1,6 @@
 package com.formedix.dmedelacruz.exception;
 
 import com.formedix.dmedelacruz.exception.constant.ErrorCode;
-import com.formedix.dmedelacruz.exception.constant.ErrorMessage;
 import lombok.Getter;
 
 @Getter
@@ -9,13 +8,13 @@ public class UnsupportedFileTypeException extends AbstractException {
 
     private final String fileType;
 
-    public UnsupportedFileTypeException(ErrorCode errorCode, ErrorMessage errorMessage, String fileType) {
-        super(errorCode, errorMessage);
+    public UnsupportedFileTypeException(ErrorCode errorCode, String fileType) {
+        super(errorCode);
         this.fileType = fileType;
     }
 
-    public UnsupportedFileTypeException(ErrorCode errorCode, ErrorMessage errorMessage, String fileType, Throwable cause) {
-        super(errorCode, errorMessage, cause);
+    public UnsupportedFileTypeException(ErrorCode errorCode, String fileType, Throwable cause) {
+        super(errorCode, cause);
         this.fileType = fileType;
     }
 }
